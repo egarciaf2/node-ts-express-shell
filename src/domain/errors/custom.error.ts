@@ -1,3 +1,6 @@
+
+import { Response } from 'express';
+
 export class CustomError extends Error {
 
     private constructor(
@@ -5,6 +8,15 @@ export class CustomError extends Error {
         public readonly message: string,
     ) {
         super( message );
+    }
+
+    static handleError( error: any, res: Response ): Response<any> {
+
+        if ( error instanceof CustomError ) {
+            return res.status( error.statusCode ).json( error.message );
+        }
+        console.log( `${ error }` );
+        return res.status( 500 ).json( 'Internal server error' );
     }
 
     static badRequest( message: string ) {
@@ -27,7 +39,7 @@ export class CustomError extends Error {
         return new CustomError( 409, message );
     }
 
-    static internalServer( message: string ) {
+    static internalServerError( message: string ) {
         return new CustomError( 500, message );
     }
 
