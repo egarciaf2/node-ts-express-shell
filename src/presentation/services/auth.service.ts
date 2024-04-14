@@ -1,5 +1,6 @@
-import { CustomError, RegisterUserDto, UserEntity } from "../../domain";
+import { CustomError, LoginUserDto, RegisterUserDto, UserEntity } from "../../domain";
 import { UserModel } from "../../data";
+import { bcryptAdapter, JwtAdapter } from "../../config";
 
 export class AuthService {
     constructor() {
@@ -12,18 +13,20 @@ export class AuthService {
 
         try {
             const newUser = new UserModel( userDto );
-            await newUser.save();
 
             //Encrypted password
+            newUser.password = bcryptAdapter.hash( userDto.password );
+
+            await newUser.save();
 
             //JWT <- token authentication user
 
             //Email de confirmación
 
-            const {password, ...userEntity} =  UserEntity.fromObject( newUser );
+            const { password, ...rest } = UserEntity.fromObject( newUser );
 
             return {
-                user: userEntity,
+                user:  rest,
                 token: '123456xd'
             };
 
@@ -32,13 +35,30 @@ export class AuthService {
         }
     }
 
-    // loginUser( obj: { [key: string]: any } ): [ string?, LoginUserDto? ] {
-    //     const [error, userDTO] = LoginUserDto.create( obj );
-    //     if (error) return [ error ];
-    //
-    //     return [ undefined, userDTO ];
-    // }
-    //
+    async loginUser( loginDTO: LoginUserDto ) {
+
+        const existUser = await UserModel.findOne( { email: loginDTO.email } );
+        if ( !existUser ) throw CustomError.badRequest( 'Email or password invalid' );
+
+        const passwordMatch = bcryptAdapter.compare( loginDTO.password, existUser.password );
+        if ( !passwordMatch ) throw CustomError.badRequest( 'Email or password invalid' );
+
+        const { password, ...rest } = UserEntity.fromObject( existUser );
+
+        //Generate JWT
+        const token = await JwtAdapter.generateToken( {
+            id: existUser._id,
+            email: existUser.email,
+        } );
+        if ( !token ) throw CustomError.internalServerError( 'Error generating token' );
+
+        return {
+            user:  rest,
+            token: token
+        };
+
+    }
+
     // validateEmail( obj: { [key: string]: any } ): [ string?, EmailDto? ] {
     //     const [error, emailDTO] = EmailDto.create( obj );
     //     if (error) return [ error ];

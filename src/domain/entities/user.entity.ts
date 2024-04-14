@@ -21,7 +21,7 @@ export class UserEntity {
         if ( !email ) throw CustomError.badRequest( 'Missing email' );
         if ( !emailValidated === undefined ) throw CustomError.badRequest( 'Missing emailValidated' );
         if ( !password ) throw CustomError.badRequest( 'Missing password' );
-        if ( !state ) throw CustomError.badRequest( 'Missing state' );
+        if ( !state?.length ) throw CustomError.badRequest( 'Missing state' );
         if ( !role ) throw CustomError.badRequest( 'Missing role' );
 
         return new UserEntity(
@@ -30,7 +30,7 @@ export class UserEntity {
             email,
             emailValidated,
             password,
-            state,
+            state[0],
             role,
             img,
         );

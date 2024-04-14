@@ -11,14 +11,14 @@ export class AuthRoutes {
 
         const router = Router();
 
-        const authService = new AuthService();
+        const service = new AuthService();
 
-        const authController = new AuthController(authService);
+        const controller = new AuthController(service);
 
         // Definir las rutas
-        router.post('/login', authController.loginUser );
-        router.post('/register', authController.registerUser );
-        router.get('/validate-email/:token', authController.validateEmail );
+        router.post('/register', controller.registerUser );
+        router.post('/login', controller.loginUser );
+        router.get('/validate-email/:token', controller.validateEmail );
         return router;
     }
 
