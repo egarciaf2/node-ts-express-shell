@@ -20,11 +20,14 @@ export class JwtAdapter {
     }
 
     static verifyToken( token: string ): any {
-        try {
-            return jwt.verify( token, JWT_SEED );
-        } catch ( error ) {
-            return null;
-        }
+
+        return new Promise( ( resolve ) => {
+            jwt.verify( token, JWT_SEED, ( err, decoded ) => {
+                if ( err ) return resolve( null );
+                resolve( decoded );
+            } );
+        });
+
     }
 
 }
