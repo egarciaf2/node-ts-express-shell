@@ -8,10 +8,10 @@ export class CategoryController {
 
     createCategory = ( req: Request, res: Response ) => {
 
-        const [ error, createCategory ] = CreateCategoryDto.create( req.body );
+        const [ error, createCategoryDto ] = CreateCategoryDto.create( req.body );
         if ( error ) return res.status( 400 ).json( error );
 
-        res.json( createCategory );
+        res.json( createCategoryDto );
     }
 
     getCategories = ( req: Request, res: Response ) => {

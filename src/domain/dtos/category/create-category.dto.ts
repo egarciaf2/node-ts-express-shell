@@ -1,4 +1,3 @@
-import { regularExps } from "../../../config";
 
 export class CreateCategoryDto {
 
