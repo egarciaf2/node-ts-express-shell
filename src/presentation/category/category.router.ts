@@ -1,7 +1,6 @@
 import { Router } from 'express';
 import { CategoryController } from "./category.controller";
-import { AuthMiddleware } from "../middlewares/auth.middleware";
-
+import { CategoryService } from "../services/category.service";
 
 export class CategoryRoutes {
 
@@ -10,14 +9,16 @@ export class CategoryRoutes {
 
         const router = Router();
 
-        const controller = new CategoryController();
+        const service = new CategoryService();
+
+        const controller = new CategoryController(service);
 
         // Definir las rutas
-        router.get( '/', [ AuthMiddleware.validateJWT ], controller.getCategories );
-        router.get( '/:idCategory', [ AuthMiddleware.validateJWT ], controller.getCategory );
-        router.post( '/', [ AuthMiddleware.validateJWT ], controller.createCategory );
-        router.put( '/:idCategory', [ AuthMiddleware.validateJWT ], controller.updateCategory );
-        router.delete( '/:idCategory', [ AuthMiddleware.validateJWT ], controller.deleteCategory );
+        router.get( '/', controller.getCategories );
+        router.get( '/:idCategory', controller.getCategory );
+        router.post( '/', controller.createCategory );
+        router.put( '/:idCategory', controller.updateCategory );
+        router.delete( '/:idCategory', controller.deleteCategory );
 
         return router;
     }

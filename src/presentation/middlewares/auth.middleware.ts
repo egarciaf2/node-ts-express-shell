@@ -17,7 +17,7 @@ export class AuthMiddleware {
             if ( !token ) return res.status( 401 ).json( { error: 'No token provided' } );
 
             const payload = await JwtAdapter.verifyToken<{ id: string }>( token );
-            if ( !payload ) return res.status( 401 ).json( { error: 'Invalid Token 2' } );
+            if ( !payload ) return res.status( 401 ).json( { error: 'Invalid Token' } );
 
             const user = await UserModel.findById( payload.id );
             if ( !user ) return res.status( 401 ).json( { error: 'Not authorized' } );
