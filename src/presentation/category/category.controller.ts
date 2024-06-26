@@ -24,13 +24,10 @@ export class CategoryController {
     getCategories = ( req: Request, res: Response ) => {
 
         const { page = 1, limit = 10 } = req.query;
-        const [ error, pagination ] = PaginationDto.create( +page, +limit );
+        const [ error, paginationDto ] = PaginationDto.create( +page, +limit );
         if( error ) return res.status( 400 ).json( { error } );
 
-        console.log( page, limit)
-
-
-        this._categoryService.getCategories()
+        this._categoryService.getCategories( paginationDto! )
             .then( categories => res.json( categories ) )
             .catch( err => CustomError.handleError( err, res ) );
     }
